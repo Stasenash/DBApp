@@ -1,0 +1,41 @@
+﻿@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>
+            @{
+                var identity = (ClaimsIdentity)User.Identity;
+                var loginName = identity.Name;
+                var loginTime = identity.GetSpecificClaim("LoginTime");
+            }
+            Hi, @loginName! You logged in at @loginTime.
+        </p>
+        <div>
+            @{
+                var markedAnime = (IEnumerable<IGrouping<string, LabeledAnime>>)ViewData["LikedAnime"];
+            }
+            Your list:
+            @foreach (var labelGroup in markedAnime)
+            {
+                <div>You marked this anime as "@labelGroup.Key"</div>
+                <ol>
+                    @foreach (var anime in labelGroup)
+                    {
+                        <li>@anime.AnimeName</li>
+                    }
+                </ol>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Hi, Anonymous! Please, <a asp-area="Identity" asp-page="/Account/Login">log in</a></p>
+    }
+</div>
